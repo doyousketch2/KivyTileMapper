@@ -5,8 +5,8 @@ to be used in whatever game you design.
 To be used with my other project, KivyAtlasGenerator  
 https://github.com/doyousketch2/KivyAtlasGenerator
 
-First you'll need Python.  Linux and OSX users should be fine as-is.  
-Win users might need to download it from their website  
+First you'll need Python.  Linux and OSX users should be fine.  
+Windows users might need to download it from their website  
 https://www.python.org/downloads/
 
 I used v3.4.2 to create this, so version 3 or higher is recommended.  
