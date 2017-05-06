@@ -2,6 +2,9 @@
 Generates portable pixmaps of your levels, from spritesheets and Kivy .atlas files,  
 to be used in whatever game you design.  
 
+To be used with my other project, KivyAtlasGenerator  
+https://github.com/doyousketch2/KivyAtlasGenerator
+
 First you'll need Python.  Linux and OSX users should be fine as-is.  
 Win users might need to download it from their website  
 https://www.python.org/downloads/
