@@ -1,0 +1,401 @@
+<FileScreen>:
+  label:  label
+
+  BoxLayout:
+    orientation:  'vertical'
+
+    FileChooserIconView:  ##  top region
+      path: './data'
+      filters: ['*.atlas']
+      canvas.before:
+        Color:
+          rgb:  .4, .5, .5
+        Rectangle:
+          pos:  self.pos
+          size:  self.size
+      on_selection:  root.select(*args)
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+      BoxLayout:  ##  bottom region
+        orientation:  'horizontal'
+        size_hint_y:  0.06
+
+        Label:
+          id:  label
+          text:  'Select a spritesheet'
+          canvas.before:
+            Color:
+              rgb:  .2, .3, .3
+            Rectangle:
+              pos:  self.pos
+              size:  self.size
+
+        Button:
+          text:  'Select'
+          background_color:  .4, .5, .5,  1
+          on_release:  root.choice()
+          size_hint_x:  0.25
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+<TileScreen>:
+  BoxLayout:
+    orientation:  'vertical'
+
+    BoxLayout:  ##  tiles
+      orientation:  'horizontal'
+      size_hint_y:  0.25
+
+      Button:
+        text:  '<'
+        id:  scrollLeft
+        on_release:  root.scroll(-app.tileX*2)
+        background_color:  .4, .5, .5,  1
+        size_hint_x:  0.05
+
+      Button:
+        id:  tileSet
+        on_release:  root.select()
+        background_color:  0, 0, 0,  0
+        size:  self.size
+        pos:  self.pos
+
+        canvas:
+          Rectangle:
+            texture:  app.tile[0]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 0,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[1]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 1,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[2]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 2,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[3]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 3,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[4]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 4,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[5]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 5,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[6]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 6,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[7]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 7,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[8]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 8,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[9]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 9,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[10]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 10,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[11]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 11,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[12]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 12,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[13]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 13,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[14]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 14,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[15]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 15,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[16]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 16,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[17]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 17,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[18]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 18,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[19]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 19,  self.pos[1] + self.size[1] * .667 )
+          Rectangle:
+            texture:  app.tile[20]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 0,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[21]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 1,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[22]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 2,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[23]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 3,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[24]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 4,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[25]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 5,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[26]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 6,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[27]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 7,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[28]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 8,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[29]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 9,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[30]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 10,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[31]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 11,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[32]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 12,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[33]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 13,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[34]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 14,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[35]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 15,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[36]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 16,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[37]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 17,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[38]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 18,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.tile[39]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 19,  self.pos[1] + self.size[1] * .333 )
+          Rectangle:
+            texture:  app.preTile[0]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 0,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[1]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 1,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[2]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 2,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[3]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 3,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[4]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 4,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[5]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 5,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[6]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 6,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[7]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 7,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[8]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 8,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[9]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 9,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[10]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 10,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[11]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 11,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[12]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 12,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[13]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 13,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[14]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 14,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[15]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 15,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[16]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 16,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[17]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 17,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[18]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 18,  self.pos[1] )
+          Rectangle:
+            texture:  app.preTile[19]
+            size:  (self.size[0] / 23,  self.size[1] / 3.3)
+            pos:  (self.pos[0] + self.size[0] / 20 * 19,  self.pos[1] )
+
+
+
+      Button:
+        text:  '>'
+        id:  scrollRight
+        on_release:  root.scroll(app.tileX*2)
+        background_color:  .4, .5, .5,  1
+        size_hint_x:  0.05
+
+    Label:
+      id:  current
+      text:  app.currentTile
+      size_hint_y:  0.06
+      canvas.before:
+        Color:
+          rgb:  (0.1, 0.1, 0.1,  1)
+        Rectangle:
+          size:  self.size
+          pos:  self.pos
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    Button:  ##  map grid
+      id:  grid
+      on_press:  root.hover(1)
+      on_release: root.hover(0)
+      on_release:  root.place()
+      background_color:  1, 1, 1,  0.3
+      size:  self.size
+      pos:  self.pos
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    BoxLayout:  ##  top button row
+      id:  topRow
+      orientation:  'horizontal'
+      size_hint_y:  0.08
+
+      Button:
+        text:  '<'
+        on_release:  root.horiz(-1)
+        background_color:  .4, .5, .5,  1
+
+      Button:
+        text:  '>'
+        on_release:  root.horiz(1)
+        background_color:  .4, .5, .5,  1
+
+      Button:
+        text:  'OK'
+        on_press:  root.generate()
+        background_color:  .2, .3, .3,  1
+
+      Button:
+        text:  '^'
+        on_release:  root.vert(1)
+        background_color:  .4, .5, .5,  1
+
+      Button:
+        text:  'v'
+        on_release:  root.vert(-1)
+        background_color:  .4, .5, .5,  1
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    BoxLayout:  ##  bottom button row
+      id:  bottomRow
+      orientation:  'horizontal'
+      size_hint_y:  0.1
+
+      Button:
+        text:  '-'
+        on_release:  root.zoom(-0.2)
+        background_color:  .2, .3, .3,  1
+
+      Button:
+        text:  'Enemy'  ##  red
+        on_release:  root.layer(0)
+        background_color:  .9, .5, .5,  1
+
+      Button:
+        text:  'Screen'  ##  green
+        on_release:  root.layer(1)
+        background_color:  .4, .9, .4,  1
+
+      Button:
+        text:  'Object'  ##  blue
+        on_press:  root.layer(2)
+        background_color:  .4, .4, .9,  1
+
+      Button:
+        text:  '+'
+        on_release:  root.zoom(0.2)
+        background_color:  .2, .3, .3,  1
+

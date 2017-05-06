@@ -1,0 +1,3 @@
+title=KivyTileMapper
+author=Doyousketch2
+orientation=portrait
