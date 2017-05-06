@@ -1,5 +1,5 @@
 # KivyTileMapper
-Generates portable pixmaps of your levels, from spritesheets and Kivy .atlas files,
+Generates portable pixmaps of your levels, from spritesheets and Kivy .atlas files,  
 to be used in whatever game you design.
 
 First you'll need Python.  Linux and OSX users should be fine as-is.
@@ -38,7 +38,7 @@ download a new version of Python from their website.
 
 ------
 Alright, once you're certain you have Python and Kivy,
-you can **run the KivyAtlasGenerator**
+you can **run the KivyTileMapper**
 
 - Linux:
 `./main.py`
