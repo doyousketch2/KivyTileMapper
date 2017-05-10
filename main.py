@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -*-coding: utf-8 -*-
 ##=========================================================
 ##  tilemapper.py                               28 Apr 2017
 ##
-##  Generates a Kivy app from spritesheet
+##  Generates a portable pixmap for game design
+##  from spritesheet and kivy .atlas file
 ##
 ##  Eli Leigh Innis
 ##  Twitter :  @ Doyousketch2
 ##  Email :  Doyousketch2 @ yahoo.com
 ##
-##  GNU GPLv3                 gnu.org/licenses/gpl-3.0.html
+##  GNU GPLv3                 gnu.org/licenses/gpl-3..html
 ##=========================================================
 ##  required  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ##  you'll need kivy:
-##  (debian)
+##  ( debian )
 ##        sudo pip3 install kivy
-##  (linux)
+##  ( linux )
 ##        sudo python3 -m pip install kivy
-##  (mac)
+##  ( mac )
 ##        sudo easy_install pip
 ##        python -m pip install kivy
-##  (win)
+##  ( win )
 ##        py -m pip install kivy
 ##=========================================================
 ##  libs  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,14 +30,13 @@
 import  os
 import  sys
 
-from  kivy .app           import  App               ##  GUI
-from  kivy .graphics       import *
+from  kivy .app         import  App                  ## GUI
+from  kivy .graphics      import *
 from  kivy .lang            import  Builder
-from  kivy .uix .image       import  Image
+from  kivy .uix .image        import  Image
 from  kivy .uix .screenmanager  import  ( ScreenManager,
                                       NoTransition, Screen )
-from  kivy .graphics .texture  import  Texture
-from  kivy .core .window     import  Window
+from  kivy .core .window      import  Window
 from  kivy .clock           import  Clock
 
 ##=========================================================
@@ -48,15 +48,15 @@ HEIGHT  = 600
 ##=========================================================
 ##  script  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Window .size  = ( WIDTH, HEIGHT )
+Window .size  = ( WIDTH,  HEIGHT )
 
 ##  Kivy sux, need 'Builder' when using ScreenManager...
-Builder .load_file('./tilemapper.kv')
+Builder .load_file( './tilemapper.kv' )
 
 
-class FileScreen(Screen):
+class FileScreen( Screen ):
 
-  def select(self, *args):
+  def select( self, *args ):
     self .selection  = args[1][0]
     try:
       app .selected  = self .selection
@@ -64,275 +64,321 @@ class FileScreen(Screen):
     except:  pass
 
 
-  def choice(self):
+  def choice( self ):
 
     app .path,  app .ext  = os .path .splitext( app .selected )
 
-    if '/' in app .path:  ##  Unix, Linux, Android, Mac OSX, iOS
-      app .filename  = app .path .split('/')[-1]
-    else:  ##  the other OS
-      app .filename  = app .path .split('\\')[-1]
-    print(app .filename)
+    if '/' in app .path:   ## Unix, Linux, Android, Mac OSX, iOS
+      app .filename  = app .path .split( '/' )[-1]
+    else:   ## the other OS
+      app .filename  = app .path .split( '\\' )[-1]
+    print( app .filename )
 
-    with open('./data/' + app .filename + '.atlas') as JSONfile:  ##  .atlas is a JSON file
+    with open( './data/' + app .filename + '.atlas' ) as JSONfile:   ## .atlas is a JSON file
 
-      JSONfile .readline()  ##  skip the first line, 'cuz it's just a curly bracket {
+      JSONfile .readline()   ## skip the first line, 'cuz it's just a curly bracket  {
 
-                                                          ##    "spritesheet.png": {
-      spritesheet  = JSONfile .readline() .split('"')[1]  ##  spritesheet.png
+                                                             ## "spritesheet.png": {
+      spritesheet  = JSONfile .readline() .split( '"' )[1]   ## spritesheet.png  -not used
 
-                                            ##    "Name":  [ xpos, ypos,  w, h],\n
-      line = JSONfile .readline() .strip()  ##  "Name":  [ xpos, ypos,  w, h],
+                                               ## "Name":  [ xpos, ypos,  w, h],\n
+      line = JSONfile .readline() .strip()   ## "Name":  [ xpos, ypos,  w, h],
 
-      app .name .append(line .split('"')[1])  ##  Name
+      values  = line .split( '[' )[1] .split( ']' )[0] .split( ',' )   ## xpos, ypos,  w, h
 
-      values  = line .split('[')[1] .split(']')[0] .split(',')  ##  xpos, ypos,  w, h
+      app .mapPxlW  = int( values[2] .strip())   ## w     Map Tile width
+      app .mapPxlH  = int( values[3] .strip())   ## h     "    "    height
 
-      app .gridW  = int(values[2] .strip() )  ##  w     grid tile width
-      app .gridH  = int(values[3] .strip() )  ##  h     "    "    height
-
+      i  = 0
       for line in JSONfile:
-        if line .strip() .startswith('"'):  ##  skip closing brackets }
+        if line .strip() .startswith( '"' ):   ## skip closing brackets }
+          app .name .append( line .split( '"' )[1] )   ## Name
+          i += 1
 
-          app .name .append(line .split('"')[1])  ##  B2
-
-    i = 0
-    while i < len(app .tile):
-      app .tile[i]  = Image(source = 'atlas://' + app .path + '/' + app .name[i] ) .texture
+    i = app .tileX
+    while i < len( app .Tile ):
+      app .Tile[i]  = Image( source = 'atlas://' + app .path + '/' + app .name[i] ) .texture
       i += 1
 
-    self .manager .switch_to( TileScreen() )
+    Window .size  = ( int( app .mapPxlW * app .mapX * app .zoom ),  int( app .mapPxlH * app .mapY * app .zoom * 1.5 ))
+    self .manager .switch_to( TileScreen())
 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-class TileScreen(Screen):
+class TileScreen( Screen ):
 
-  def refreshTiles(self):
+  def refreshTiles( self ):   ## tiles from the spritesheet
     off  = app .offset
+
+    if app .once == 0:
+      self .ids .topRow .size[1]  = app .tilePxlH * 2
+      self .ids .bottomRow .size[1]  = app .tilePxlH * 2
+      app .origin  = self .ids .tileSet .pos
+      app .mapOrigin  = self .ids .Map .pos
+      app .mapSize  = ( app .mapPxlW,  app .mapPxlH )
+
+      i  = 0
+      while i < app .tileX -1:
+        app .prevNums[i] = i
+        i += 1
+
+      app .once  = 1
+
     self .ids .tileSet .canvas .clear()
+
+    app .tilePxlW  = self .ids .tileSet .size[0] / 20
+    app .tilePxlH  = self .ids .tileSet .size[1] / 3
+
+    app .outlineSize  = ( app .tilePxlW,  app .tilePxlH)
+    app .tileSize  = ( app .tilePxlW * .9,  app .tilePxlH * .9 )
 
     i  = 0
     while i < app .tileX * app .tileY:
-      app .tile[i]  = Image(source = 'atlas://' + app .path + '/' + app .name[off] ) .texture
 
-      col  = app .tileW * (i % 20)
-      row  = app .tileH * (2 - int( i / 20))
-      ##  subtract from 2 to reverse bottom-up order 0,1,2 to top-down 2,1,0
+      col  = app .tilePxlW * ( i % 20 )
+      row  = app .tilePxlH * int( i / 20 )
 
-      tilePos  = (self .ids .tileSet .pos[0] + col,  self .ids .tileSet .pos[1] + row )
-      outlinePos  = (self .ids .tileSet .pos[0] + col - self .ids .tileSet .size[0] / 200,
-                     self .ids .tileSet .pos[1] + row - self .ids .tileSet .size[1] / 50)
-
-      if i + app .offset >= len(app .name):
-        currentName  = app .name[i + app .offset - len(app .name)]
+      tilePos  = ( app .origin[0] + col + app .tilePxlW * .04,  app .origin[1] + row )
+      if app .currentNum >= app .tileX:
+        outlinePos  = ( app .origin[0],  app .origin[1] - app .tilePxlH * .04 )
       else:
-        currentName  = app .name[i + app .offset]
+        outlinePos  = ( app .origin[0] + app .currentNum * app .tilePxlW,  app .origin[1] - app .tilePxlH * .04 )
 
       with self .ids .tileSet .canvas:
-        if app .currentTile == currentName:
-          Color(1, 0.1, 0.1,  1)  ##  red outline
-          Rectangle(size = app .outlineSize,  pos = outlinePos)
-          Color(1, 1, 1,  1)  ##  change color back to white, or tiles go wonky
-        if i < app .tileX * 2:
-          Rectangle(texture = app .tile[i],  size = app .tileSize,  pos = tilePos)
-        else:
-          Rectangle(texture = app .preTile[i],  size = app .tileSize,  pos = tilePos)
+        if i == 0:
+          Color( 1, .1, .1,  1 )   ## red outline
+          Rectangle( size = app .outlineSize,  pos = outlinePos )
+          Color( 1, 1, 1,  1 )   ## change back to white, or Tile colors go wonky
+        Rectangle( texture = app .Tile[i],  size = app .tileSize,  pos = tilePos )
 
       off += 1
-      if off == len(app .name):  off  = 0
+      if off == len( app .name ):  off  = 0
       i += 1
 
 
-  def refreshGrid(self):
-    self .ids .grid .canvas .clear()
+  def refreshMap( self ):   ## the Map you're drawing
+    self .ids .Map .canvas .clear()
 
     i  = 0
-    while i < app .gridX * app .gridY:
-      col  = app .gridW * (i % app .gridX)
-      row  = app .gridH * int(i / app .gridX)
+    while i < app .mapX * app .mapY:
+      col  = app .mapPxlW * ( i % app .mapX )
+      row  = app .mapPxlH * int( i / app .mapX )
 
-      gridPos  = (app .gridPos[0] + col,  app .gridPos[1] + row )
+      mapOrigin  = ( ( app .mapOrigin[0] + col ),  ( app .mapOrigin[1] + row ))
 
       with self .ids .tileSet .canvas:
-        Rectangle(texture = app .grid[i],  size = app .gridSize,  pos = gridPos)
+        Rectangle( texture = app .Map[i],  size = app .mapSize,  pos = mapOrigin )
 
       i += 1
 
 
-  def layer(self, lay):
-    app .layer  = lay * app .gridX * app .gridY
-    TileScreen .sizes(self)
-    TileScreen .refreshGrid(self)
+  def select( self ):   ## click a Tile
 
-
-  def hover(self, toggle):
-    if toggle == 1:       ##  Kivy sux again...
-      app .ident  = self  ##  <-- using this to cheat Clock callback.
-      ##   Clock .schedule_interval(TileScreen .place,  0.05)
-      ##  can't pass 'self' along as (TileScreen .place(self),  0.05)
-      ##  so I set  app.ident = self   then reference that instead,
-      ##  in 'place' function:     with app .ident .ids .grid .canvas:
-      ##  instead of:              with self .ids .grid .canvas:
-      app .hoverEvent  = Clock .schedule_interval(TileScreen .place,  0.05)
-    else:  app .hoverEvent .cancel()
-
-
-  def place(self):
     mX  = Window .mouse_pos[0]
     mY  = Window .mouse_pos[1]
 
-    mY -= app .buttonHeight  ##  subtract lower buttons
+    mX -= self .ids .scrollLeft .size[0]                         ## left scroll button
+    mY -= self .ids .Map .size[1]                                    ## Map height
+    mY -= self .ids .topRow .size[1] + self .ids .bottomRow .size[1]   ## button height
 
-    col  = int(mX / app .gridW)
-    row  = int(mY / app .gridH)
+    col  = int( mX / app .tilePxlW )
+    row  = int( mY / app .tilePxlH )
 
-    if col >= app .gridX - 1:  col  = app .gridX - 1
+    app .currentNum  = col + row * 20
+
+    if row < 1:
+      app .currentText  = app .name[ app .prevNums[ col ] ]
+      print('Offset:', app .offset, '  Num:', col, '  eq:',  app .offset + col)
+
+    else:
+      if app .currentNum + app .offset >= len( app .name ):
+        app .currentText  = app .name[ app .currentNum + app .offset - len( app .name ) ]
+      else:
+        app .currentText  = app .name[ app .currentNum + app .offset ]
+
+      print('Offset:', app .offset, '  Num:', app .currentNum, '  equals:',  app .offset + app .currentNum)
+      if app .currentNum + app .offset not in app .prevNums:   ##  start at right, shuffle left
+        print('sorting  ',  app .prevNums[0],  app .prevNums[1],  app .prevNums[2],  app .prevNums[3])
+        i  = app .tileX -1
+        while i >= 1:
+          app .prevNums[i]  = app .prevNums[i -1]
+          app .Tile[i]  = Image( source = 'atlas://' + app .path + '/' + app .name[ app .prevNums[i] ]) .texture
+          i -= 1
+        app .prevNums[0]  = app .currentNum + app .offset
+
+        app .Tile[0]  = Image( source = 'atlas://' + app .path + '/' + app .name[ app .prevNums[0] ]) .texture
+
+      if app .name[ app .prevNums[0] ] != app .currentText:
+        print('resorting  ',  app .prevNums[0],  app .prevNums[1],  app .prevNums[2],  app .prevNums[3])
+        i  = app .tileX -1
+        found  = 0
+        while i >= 1:
+          if app .name[ app .prevNums[i] ] == app .currentText:
+            found  = 1
+          if found == 1:
+            app .prevNums[i]  = app .prevNums[i -1]
+            app .Tile[i]  = Image( source = 'atlas://' + app .path + '/' + app .name[ app .prevNums[i] ]) .texture
+          i -= 1
+        app .prevNums[0]  = app .currentNum + app .offset
+
+        app .Tile[0]  = Image( source = 'atlas://' + app .path + '/' + app .name[ app .prevNums[0] ]) .texture
+
+    self .ids .current .text  = app .currentText
+    TileScreen .refreshTiles( self )
+    TileScreen .refreshMap( self )
+
+
+  def scroll( self, off ):   ## < left  tiles  right >
+    app .offset += off
+    if app .offset < 0:  app .offset += len( app .name )
+    if app .offset >= len( app .name ):  app .offset -= len( app .name )
+
+    print('Offset:', app .offset)
+
+    i  = app .tileX
+    o  = 0
+    while i < app .tileX * app .tileY -1:
+      if i + app .offset >= len( app .name ):  o = len( app .name )
+      app .Tile[i]  = Image( source = 'atlas://' + app .path + '/' + app .name[ i - o + app .offset ]) .texture
+      i += 1
+
+    TileScreen .refreshTiles( self )
+    TileScreen .refreshMap( self )
+
+
+  def horiz( self, xx ):   ## < >
+    app .mapX  += xx
+    if app .mapX < 0:  app .mapX  = 0
+
+    while len( app .Map ) <  app .mapX * app .mapY * app .bpp:
+      app .Map .append( Image( source = 'blank.png' ) .texture )
+      app .number .append( 0 )
+
+    while len( app .Map ) >  app .mapX * app .mapY * app .bpp:
+      del app .Map[-1]
+      del app .number[-1]
+
+    if xx > 0:
+      Window .size  = ( int( Window .size[0] + app .mapPxlW ),  Window .size[1] )
+    else:
+      Window .size  = ( int( Window .size[0] -app .mapPxlW ),  Window .size[1] )
+
+    TileScreen .refreshTiles( self )   ## Kivy is refreshing the tiles
+    TileScreen .refreshMap( self )    ## before the window gets resized...
+
+
+  def vert( self, yy ):   ## v ^
+    app .mapY  += yy
+    if app .mapY < 0:  app .mapY  = 0
+
+    while len( app .Map ) <  app .mapX * app .mapY * app .bpp:
+      app .Map .append( Image( source = 'blank.png' ) .texture )
+      app .number .append( 0 )
+
+    while len( app .Map ) >  app .mapX * app .mapY * app .bpp:
+      del app .Map[-1]
+      del app .number[-1]
+
+    if yy > 0:
+      Window .size  = ( Window .size[0],  int( Window .size[1] + app .mapPxlH * 1.4 ))
+      app .origin  = ( self .ids .tileSet .pos[0], self .ids .tileSet .pos[1] + app .mapPxlH )
+    else:
+      Window .size  = ( Window .size[0],  int ( Window .size[1] -app .mapPxlH * 1.4 ))
+      app .origin  = ( self .ids .tileSet .pos[0], self .ids .tileSet .pos[1] -app .mapPxlH )
+
+    TileScreen .refreshTiles( self )   ## Kivy is refreshing the tiles
+    TileScreen .refreshMap( self )    ## before the window gets resized...
+
+
+  def layer( self, lay ):   ## enemy, screen, object
+    app .layer  = lay * app .mapX * app .mapY
+    TileScreen .refreshMap( self )
+
+
+  def paint( self, toggle ):
+    if toggle == 1:        ## Kivy sux again...
+      app .ident  = self   ## <--using this to cheat Clock callback.
+       ##  Clock .schedule_interval( TileScreen .place,  .05 )
+       ## can't pass 'self' along as ( TileScreen .place( self ),  .05 )
+
+       ## so I set  "app .ident = self"   then reference that in the 'place' function.
+       ## instead of:        with self .ids .Map .canvas:
+       ## I used:             with app .ident .ids .Map .canvas:
+      app .painting  = Clock .schedule_interval( TileScreen .place,  .05 )
+    else:  app .painting .cancel()
+
+
+  def place( self ):
+    mX  = Window .mouse_pos[0]
+    mY  = Window .mouse_pos[1]
+
+    mY -= app .ident .ids .topRow .size[1] + app .ident .ids .bottomRow .size[1]   ## lower buttons
+
+    col  = int( mX / app .mapPxlW )
+    row  = int( mY / app .mapPxlH )
+
+    if col >= app .mapX -1:  col  = app .mapX -1
     elif col < 0:  col  = 0
 
-    if row >= app .gridY - 1:  row  = app .gridY - 1
+    if row >= app .mapY -1:  row  = app .mapY -1
     elif row < 0:  row  = 0
 
-    i  = col + row * app .gridX
-    xx  = app .gridW * col
-    yy  = app .gridH * row
+    i  = col + row * app .mapX
+    xx  = app .mapPxlW * col
+    yy  = app .mapPxlH * row
 
     app .number[i]  = app .currentNum
-    app .grid[i]  = Image(source = 'atlas://' + app .path + '/' + app .currentTile ) .texture
+    app .Map[i]  = Image( source = 'atlas://' + app .path + '/' + app .currentText ) .texture
 
-    with app .ident .ids .grid .canvas:
-      Rectangle(texture = app .grid[i],  size = app .gridSize,  pos = (app .gridPos[0] + xx,  app .gridPos[1] + yy ) )
-
-
-  def sizes(self):  ##  Note:  should be called on window resize
-
-    app .leftScroll  = self .ids .scrollLeft .size[0]
-    app .labelHeight  = self .ids .current .size[1]
-
-    app .gridHeight  = self .ids .grid .size[1]
-    app .buttonHeight  = self .ids .topRow .size[1] + self .ids .bottomRow .size[1]
-
-    app .tileW  = self .ids .tileSet .size[0] / 20
-    app .tileH  = self .ids .tileSet .size[1] / 3
-
-    app .gridW  = self .ids .grid .size[0] / app .gridX
-    app .gridH  = self .ids .grid .size[1] / app .gridY
-
-    app .tileSize  = (app .tileW * 0.85,  app .tileH * 0.85)
-    app .gridSize  = (app .gridW,  app .gridH)
-
-    app .gridPos  = self .ids .grid .pos
-    app .outlineSize  = (app .tileW,  app .tileH)
+    with app .ident .ids .Map .canvas:
+      Rectangle( texture = app .Map[i],  size = app .mapSize,  pos = ( app .mapOrigin[0] + xx,  app .mapOrigin[1] + yy ))
 
 
-  def select(self):
-    TileScreen .sizes(self)
-
-    mX  = Window .mouse_pos[0]
-    mY  = Window .mouse_pos[1]
-
-    mX -= app .leftScroll  ##  subtract left scroll button
-
-    mY -= app .labelHeight
-    mY -= app .gridHeight
-    mY -= app .buttonHeight
-
-    col  = int(mX / app .tileW)
-    row  = 2 - int(mY / app .tileH)
-    ##  subract from 2 to reverse bottom-up order 0,1,2 to top-down 2,1,0
-
-    i  = col + row * 20 + app .offset
-    app .currentNum = i
-
-    if row < 2:  app .currentTile  = app .name[i]
-    else:  app .currentTile  = app .name[col]
-
-    self .ids .current .text  = app .currentTile
-
-    if Image(source = 'atlas://' + app .path + '/' + app .currentTile ) .texture not in app .preTile:
-
-      i = app .tileX - 1
-      while i > 0:
-        app .preTile[i]  = app .preTile[i - 1]
-        i -= 1
-
-      app .preTile[0]  = Image(source = 'atlas://' + app .path + '/' + app .currentTile ) .texture
-
-    TileScreen .refreshTiles(self)
-    TileScreen .refreshGrid(self)
-
-
-  def scroll(self, off):
-    TileScreen .sizes(self)
-
-    app .offset  += off
-    if app .offset < 0:  app .offset += len(app .name)
-    if app .offset >= len(app .name):  app .offset -= len(app .name)
-
-    TileScreen .refreshTiles(self)
-    TileScreen .refreshGrid(self)
-
-
-  def zoom(self, factor):
-    app .zoom += factor
-    if app .zoom < 0.2:  app .zoom  = 0.2
-    elif app .zoom > 3:  app .zoom  = 3
-
-
-  def horiz(self, xx):
-    app .gridX  += xx
-    if app .gridX < 0:  app .gridX  = 0
-
-
-  def vert(self, yy):
-    app .gridY  -= yy
-    if app .gridY < 0:  app .gridY  = 0
-
-
-  def generate(self):
+  def generate( self ):
     data  = []
 
     if app .bpp < 3:
-      data .append('P2')
-      ext  = '.pgm'  ##  Portable GreyMap format
+      data .append( 'P2' )
+      ext  = '.pgm'   ## Portable GreyMap format
     else:
-      data .append('P3')
-      ext  = '.ppm'  ##  Portable PixMap format
+      data .append( 'P3' )
+      ext  = '.ppm'   ## Portable PixMap format
 
-    data .append('%s %s' % (app .gridX, app .gridY))  ##  width, height
-    data .append(str(len(app .name) ))  ##  how many unique values
-    data .append('##  %s' % app .selected)
+    data .append( '%s %s' % ( app .mapX,  app .mapY ))   ## width, height
+    data .append( str( len( app .name )) )   ## how many unique values
+    data .append( '##  %s' % app .selected )
 
     i  = 0
-    while i < app .gridX * app .gridY:
+    while i < app .mapX * app .mapY:
       col = 0
       line = ''
-      while col < app .gridX:
+      while col < app .mapX:
         if app .bpp < 3:
-          line += str(app .number[i])
-        else:  line += '0 ' + str(app .number[i]) + ' 0'
+          line += str( app .number[i] )
+        else:  line += '0 ' + str( app .number[i] ) + ' 0'
         col += 1
-        if col < app .gridX:  line += ' '
+        if col < app .mapX:  line += ' '
         i += 1
-      data .append(line)
+      data .append( line )
 
-    Output  = '\n' .join(data)  ##  stringify list
+    Output  = '\n' .join( data )   ## stringify list
 
-    print('Writing\n')
-    with open('data/' + app .filename + ext, 'w') as fileOut:
-      fileOut .write(Output)
+    print( 'Writing\n' )
+    with open( 'data/' + app .filename + ext, 'w' ) as fileOut:
+      fileOut .write( Output )
 
-    print('Written to data/' + app .filename + ext)
+    print( 'Written to data/' + app .filename + ext )
     sys .exit()
 
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-class app(App):
+class app( App ):
   icon  = 'icon.png'
-  title  = "Kivy Tilemapper   ::   by Doyousketch2"
+  title  = 'Kivy TileMapper   ::   by Doyousketch2'
 
   sm  = ScreenManager( transition = NoTransition() )
 
@@ -341,50 +387,48 @@ class app(App):
   filename  = 'icon'
   ext  = '.png'
 
+  once  = 0
   layer  = 0
   offset  = 0
-  padding  = 6
 
-  tileW  = 30
-  tileH  = 30
-  gridW  = 20
-  gridH  = 20
+  tilePxlW  = 30
+  tilePxlH  = 30
+  mapPxlW  = 20
+  mapPxlH  = 20
 
   tileX  = 20
   tileY  = 3
-  gridX  = 30
-  gridY  = 20
+  mapX  = 30
+  mapY  = 20
 
   bpp   = 1
+  zoom  = 1
   name  = []
 
-  tileSize  = (tileW * 0.85,  tileH * 0.85)
-  outlineSize  = (tileW,  tileH)
-  outlinePos  = (0, 0)
+  tileSize  = ( tilePxlW * .85,  tilePxlH * .85 )
+  outlineSize  = ( tilePxlW,  tilePxlH )
+  outlinePos  = ( 0, 0 )
 
-  gridSize  = (gridW,  gridH)
-  gridPos  = (0, 0)
+  mapSize  = ( mapPxlW,  mapPxlH )
+  mapOrigin  = ( 0, 0 )
+  origin  = ( 0, 0 )
 
   currentNum  = 0
-  currentTile  = ''
-  number  = [0] * gridX * gridY
+  currentText  = ''
+  number  = [0] * mapX * mapY
 
-  labelHeight  = 0
-  gridHeight   = 0
-  buttonHeight = 0
-
-  hoverEvent  = ''
   ident  = ''
+  painting  = ''
+  prevNums  = [0] * tileX
 
-  ##  default textures to use so kivy doesn't crash.
-  tile  = [Image(source = 'icon.png') .texture] * tileX * 3
-  preTile  = [Image(source = 'icon.png') .texture] * tileX * 3
-  grid  = [Image(source = 'blank.png' ) .texture] * gridX * gridY * bpp
-  ##  will be regenerated once a spritesheet is selected.
+   ## default textures to use so kivy doesn't crash.
+  Tile  = [Image( source = 'icon.png' ) .texture] * tileX * 3
+  Map  = [Image( source = 'blank.png' ) .texture] * mapX * mapY * bpp
+   ## will be regenerated once a spritesheet is selected.
 
-  def build(self):
-    self .sm .add_widget( FileScreen( name = 'FileScreen') )
-    self .sm .add_widget( TileScreen( name = 'TileScreen') )
+  def build( self ):
+    self .sm .add_widget( FileScreen( name = 'FileScreen' ))
+    self .sm .add_widget( TileScreen( name = 'TileScreen' ))
     return self .sm
 
 
@@ -394,20 +438,19 @@ class app(App):
 if __name__ == '__main__':
   app() .run()
 
-##  I called it 'app' to remain consistant with .kv conventions.
+##  I called it 'app' to remain consistent with .kv conventions.
 ##  Variables within the class have the same name in .py or .kv file.
-##  examples:  app.selected  app.tileSize
+##  examples:  'app.selected'  'app.tileSize'
 
 ##  You can't do this if you load .kv without Builder,
 ##  because it'll look for a lowercase version of
 ##  your main class without the word 'app' appended to the name.
 
-##  normally, TileMapperApp would look for tilemapper.kv
-##  but I was using Builder to use ScreenManager anyway...
+##  normally, "TileMapperApp"  would look for  "tilemapper.kv"
+##  but I was using Builder to use ScreenManager anyway.
+##  Builder .load_file( './tilemapper.kv' )
 
-##  Builder .load_file('./tilemapper.kv')
-##  in this case, the .kv file could have been named anything.
+##  In this case, the .kv file could have been named anything...
 
 ##=========================================================
 ##  eof  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
